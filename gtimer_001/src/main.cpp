@@ -35,24 +35,12 @@ struct TimerConfig {
 };
 
 struct ChannelConfig {
-  char name[32]; // Nama atau label channel (max 31 karakter + null terminator)
   TimerConfig configs[MAX_CONFIGS];
   int count = 0;
   bool currentState = false; // Status ON/OFF saat ini
   bool manualOverride = false; // Flag untuk override manual via MQTT/Web
 };
 ChannelConfig channels[NUM_CHANNELS];
-
-// Struktur untuk menyimpan konfigurasi perangkat secara keseluruhan
-struct DeviceConfig {
-    bool holidayMode;
-    long timeOffset;
-    ChannelConfig channels[MAX_CHANNELS]; // Array dari ChannelConfig
-    // ... properti lain yang sudah ada di DeviceConfig Anda ...
-};
-
-// Buat instance global dari konfigurasi
-DeviceConfig deviceConfig;
 
 // NEW: Holiday Mode Flag
 bool holidayModeActive = false; // Flag untuk Holiday Mode
