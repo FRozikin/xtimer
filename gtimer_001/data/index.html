@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Timer Controller</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+  </head>
+  <body>
+    <script src="/script.js"></script>
+
+    <div class="container">
+      <div class="header">
+        <h1>Timer Controller</h1>
+        <div class="time-display">
+          <div>
+            Current: <span id="currentTime" class="time-box">00:00:00</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="channelTabs"></div>
+      <div id="channelContents"></div>
+
+      <div class="control-row">
+        <button id="syncTimeBtn" data-tooltip="Sync Time">🔄</button>
+        <select id="ntpServerSelect">
+          <option value="pool.ntp.org">pool.ntp.org</option>
+          <option value="time.google.com">time.google.com</option>
+        </select>
+        <label
+          for="timeOffsetInput"
+          style="margin-left: 10px; white-space: nowrap"
+          >Offset (H):</label
+        >
+        <input
+          type="number"
+          id="timeOffsetInput"
+          value="7"
+          min="-12"
+          max="14"
+          step="1"
+          title="Time offset in hours (e.g., 7 for GMT+7)"
+          style="width: 50px"
+        />
+        <button id="wifiConfigBtn" class="wifi-btn" data-tooltip="WiFi Config">
+          📶
+        </button>
+        <button
+          id="holidayModeBtn"
+          data-tooltip="Activate/Deactivate Holiday Mode"
+        >
+          Holiday: OFF
+        </button>
+        <button id="saveBtn" class="save-btn" data-tooltip="Save All Configs">
+          💾
+        </button>
+        <span style="margin-left: auto"
+          >Last Sync:
+          <span id="lastSyncTime" class="time-box">Never</span></span
+        >
+      </div>
+
+      <div id="notification" class="notification"></div>
+    </div>
+
+    <div id="wifiModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>WiFi Configuration</h2>
+        <div id="wifiNetworks" class="wifi-list">
+          <p>Scanning networks...</p>
+        </div>
+        <div style="margin-top: 15px">
+          <label for="wifiPassword">Password:</label>
+          <input
+            type="password"
+            id="wifiPassword"
+            placeholder="WiFi password"
+            style="width: 100%; padding: 8px; margin-top: 5px"
+          />
+        </div>
+        <button id="connectWifiBtn" class="save-btn" style="margin-top: 15px">
+          Connect
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

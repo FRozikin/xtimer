@@ -1,0 +1,370 @@
+/*
+<style>
+*/
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.header {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #4caf50;
+  color: white;
+}
+.time-display {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.time-box {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #e0e0e0;
+  transition: all 0.3s;
+}
+button:hover {
+  opacity: 0.8;
+}
+#syncTimeBtn {
+  background: #4caf50;
+  color: white;
+}
+.save-btn {
+  background: #2196f3;
+  color: white;
+}
+.wifi-btn {
+  background: #ff9800;
+  color: white;
+}
+#holidayModeBtn {
+  /* NEW: Style for Holiday Mode button */
+  background: #ff5722; /* Warna oranye untuk OFF */
+  color: white;
+  min-width: 110px; /* Tambahkan min-width agar teks "Holiday: OFF" pas */
+  padding: 8px 10px; /* Sesuaikan padding */
+}
+#holidayModeBtn.active {
+  /* NEW: Style for active Holiday Mode */
+  background: #8bc34a; /* Warna hijau untuk ON */
+}
+.control-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 15px;
+  padding-top: 20px;
+  background: white;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+th {
+  background: #f1f1f1;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.tab-button {
+  padding: 10px 15px;
+  background: #f1f1f1;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+  margin-right: 5px;
+  min-width: 60px;
+}
+.tab-button.active {
+  background: #4caf50;
+  color: white;
+}
+.tab-content {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+}
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  display: none;
+  z-index: 100;
+}
+.error {
+  background: #f44336;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 5px;
+}
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.add-btn {
+  background: #4caf50;
+  color: white;
+  padding: 5px 10px !important;
+  border-radius: 4px;
+}
+[data-tooltip] {
+  position: relative;
+}
+/* Tooltip Fix */
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 10; /* Tingkatkan z-index agar selalu di atas */
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+/* Time Input Fix */
+input.time-input {
+  border: 1px solid #ddd;
+  padding: 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  text-align: center;
+  min-width: 85px;
+}
+/* Manual Control Buttons & Status */
+.manual-control-btn {
+  padding: 6px 10px;
+  margin: 0 3px; /* Kurangi margin untuk efisiensi ruang */
+  border: none; /* Hapus border */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.2s ease-in-out;
+  outline: none; /* Hapus outline saat focus */
+}
+.manual-control-btn.on-btn {
+  background: #4caf50;
+}
+.manual-control-btn.off-btn {
+  background: #f44336;
+}
+.manual-control-btn.override-on-btn {
+  background: #17a2b8;
+} /* Warna teal/info */
+.manual-control-btn.override-off-btn {
+  background: #607d8b;
+}
+
+/* Untuk tombol yang disable */
+.manual-control-btn[disabled] {
+  background-color: #cccccc !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+.manual-control-btn[disabled]:hover {
+  opacity: 0.7; /* Jangan ada perubahan opacity saat hover disable */
+}
+
+.status-indicator {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #333;
+}
+.status-indicator.on {
+  color: #4caf50;
+}
+.status-indicator.off {
+  color: #f44336;
+}
+.status-indicator.override {
+  color: #ff9800; /* Warna oranye untuk override aktif */
+  text-shadow: 0 0 2px rgba(255, 152, 0, 0.5); /* Efek glow ringan */
+}
+
+/* NEW: Styling for day checkboxes */
+.day-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+.day-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.85em;
+  cursor: pointer;
+}
+.day-checkboxes input[type="checkbox"] {
+  margin: 0;
+}
+
+/* Sesuaikan lebar kolom untuk mengakomodasi kolom hari */
+table th:nth-child(1), table td:nth-child(1), /* ON Time */
+table th:nth-child(2), table td:nth-child(2) {
+  /* OFF Time */
+  width: 15%;
+}
+table th:nth-child(3),
+table td:nth-child(3) {
+  /* Enable */
+  width: 8%;
+}
+table th:nth-child(4),
+table td:nth-child(4) {
+  /* Active Days */
+  width: 45%;
+}
+table th:nth-child(5),
+table td:nth-child(5) {
+  /* Action */
+  width: 12%;
+}
+
+/* Mobile Optimization */
+@media screen and (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  .control-row {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    border-top: 1px solid #ddd;
+  }
+  #channelTabs {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .tab-button {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 8px 12px;
+  }
+  th,
+  td {
+    padding: 8px 5px;
+    font-size: 14px;
+  }
+  input.time-input {
+    min-width: 70px;
+    font-size: 14px;
+  }
+  input.time-input::before {
+    content: "hh:mm:ss";
+    color: #999;
+    position: absolute;
+    pointer-events: none;
+  }
+  input.time-input:focus::before {
+    display: none;
+  }
+  /* Mobile Optimization for new day checkboxes */
+  #holidayModeBtn {
+    min-width: unset;
+    padding: 8px 10px;
+  }
+  .day-checkboxes {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 2px;
+  }
+  .day-checkboxes label {
+    font-size: 0.75em;
+    white-space: nowrap;
+  }
+  /* Sesuaikan lebar kolom di mobile agar tetap responsif */
+  table th:nth-child(1), table td:nth-child(1), /* ON Time */
+  table th:nth-child(2), table td:nth-child(2) {
+    /* OFF Time */
+    width: 20%;
+  }
+  table th:nth-child(3),
+  table td:nth-child(3) {
+    /* Enable */
+    width: 10%;
+  }
+  table th:nth-child(4),
+  table td:nth-child(4) {
+    /* Active Days */
+    width: 45%;
+  }
+  table th:nth-child(5),
+  table td:nth-child(5) {
+    /* Action */
+    width: 10%;
+  }
+}
+/*
+</style>
+*/
